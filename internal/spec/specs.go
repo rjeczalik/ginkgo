@@ -41,11 +41,11 @@ func (e *Specs) Shuffle(r *rand.Rand) {
 	e.specs = shuffledSpecs
 }
 
-func (e *Specs) ApplyFocus(description string, focusString string, skipString string) {
-	if focusString == "" && skipString == "" {
+func (e *Specs) ApplyFocus(desc, focus, skip, spec string) {
+	if focus == "" && skip == "" && spec == "" {
 		e.applyProgrammaticFocus()
 	} else {
-		e.applyRegExpFocus(description, focusString, skipString)
+		e.applyRegExpFocus(desc, focus, skip, spec)
 	}
 }
 
@@ -67,25 +67,25 @@ func (e *Specs) applyProgrammaticFocus() {
 	}
 }
 
-func (e *Specs) applyRegExpFocus(description string, focusString string, skipString string) {
-	for _, spec := range e.specs {
+func (e *Specs) applyRegExpFocus(desc, focus, skip, spec string) {
+	skipre := regexp.MustCompile(skip)
+	focusre := regexp.MustCompile(focus)
+	specre := regexp.MustCompile(spec)
+	for _, s := range e.specs {
 		matchesFocus := true
 		matchesSkip := false
-
-		toMatch := []byte(description + " " + spec.ConcatenatedString())
-
-		if focusString != "" {
-			focusFilter := regexp.MustCompile(focusString)
-			matchesFocus = focusFilter.Match([]byte(toMatch))
+		toMatch := []byte(desc + " " + s.ConcatenatedString())
+		if focus != "" {
+			matchesFocus = focusre.Match(toMatch)
 		}
-
-		if skipString != "" {
-			skipFilter := regexp.MustCompile(skipString)
-			matchesSkip = skipFilter.Match([]byte(toMatch))
+		if skip != "" {
+			matchesSkip = skipre.Match(toMatch)
 		}
-
+		if spec != "" {
+			matchesSkip = matchesSkip || specre.Match(toMatch)
+		}
 		if !matchesFocus || matchesSkip {
-			spec.Skip()
+			s.Skip()
 		}
 	}
 }

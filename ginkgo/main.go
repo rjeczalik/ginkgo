@@ -255,7 +255,6 @@ func findSuites(args []string, recurse bool, skipPackage string, allowPrecompile
 	skippedPackages := []string{}
 	if skipPackage != "" {
 		skipFilters := strings.Split(skipPackage, ",")
-		filteredSuites := []testsuite.TestSuite{}
 		for _, suite := range suites {
 			skip := false
 			for _, skipFilter := range skipFilters {
@@ -267,10 +266,9 @@ func findSuites(args []string, recurse bool, skipPackage string, allowPrecompile
 			if skip {
 				skippedPackages = append(skippedPackages, suite.Path)
 			} else {
-				filteredSuites = append(filteredSuites, suite)
+				suites = append(suites, suite)
 			}
 		}
-		suites = filteredSuites
 	}
 
 	return suites, skippedPackages

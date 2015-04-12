@@ -76,7 +76,7 @@ func (suite *Suite) generateSpecs(description string, config config.GinkgoConfig
 		specs.Shuffle(rand.New(rand.NewSource(config.RandomSeed)))
 	}
 
-	specs.ApplyFocus(description, config.FocusString, config.SkipString)
+	specs.ApplyFocus(description, config.FocusString, config.SkipString, config.SpecString)
 
 	if config.SkipMeasurements {
 		specs.SkipMeasurements()

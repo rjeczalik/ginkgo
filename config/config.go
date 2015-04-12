@@ -26,6 +26,7 @@ type GinkgoConfigType struct {
 	RandomSeed        int64
 	RandomizeAllSpecs bool
 	FocusString       string
+	SpecString        string
 	SkipString        string
 	SkipMeasurements  bool
 	FailOnPending     bool
@@ -68,6 +69,7 @@ func Flags(flagSet *flag.FlagSet, prefix string, includeParallelFlags bool) {
 	flagSet.BoolVar(&(GinkgoConfig.FailFast), prefix+"failFast", false, "If set, ginkgo will stop running a test suite after a failure occurs.")
 	flagSet.BoolVar(&(GinkgoConfig.DryRun), prefix+"dryRun", false, "If set, ginkgo will walk the test hierarchy without actually running anything.  Best paired with -v.")
 	flagSet.StringVar(&(GinkgoConfig.FocusString), prefix+"focus", "", "If set, ginkgo will only run specs that match this regular expression.")
+	flagSet.StringVar(&(GinkgoConfig.SpecString), prefix+"spec", "", "If set, ginkgo will only run specs that do match this regular expression.")
 	flagSet.StringVar(&(GinkgoConfig.SkipString), prefix+"skip", "", "If set, ginkgo will only run specs that do not match this regular expression.")
 	flagSet.BoolVar(&(GinkgoConfig.EmitSpecProgress), prefix+"progress", false, "If set, ginkgo will emit progress information as each spec runs to the GinkgoWriter.")
 
@@ -116,6 +118,10 @@ func BuildFlagArgs(prefix string, ginkgo GinkgoConfigType, reporter DefaultRepor
 
 	if ginkgo.FocusString != "" {
 		result = append(result, fmt.Sprintf("--%sfocus=%s", prefix, ginkgo.FocusString))
+	}
+
+	if ginkgo.SpecString != "" {
+		result = append(result, fmt.Sprintf("--%sspec=%s", prefix, ginkgo.SpecString))
 	}
 
 	if ginkgo.SkipString != "" {
